@@ -2,14 +2,22 @@ package com.example.batru.banhangkhoapham.activity
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import com.android.volley.RequestQueue
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonArrayRequest
+import com.android.volley.toolbox.Volley
 import com.example.batru.banhangkhoapham.R
 import com.example.batru.banhangkhoapham.adapter.LoaiSanPhamAdapter
 import com.example.batru.banhangkhoapham.model.LoaiSanPham
+import com.example.batru.banhangkhoapham.util.StaticClass
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
+import org.json.JSONArray
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
 
@@ -48,9 +56,27 @@ class MainActivity : AppCompatActivity() {
         viewflipper.outAnimation = animationSlideOut
 
         val dsSanPham: ArrayList<LoaiSanPham> = arrayListOf()
-        dsSanPham.add(LoaiSanPham(id = 1, name = "Mobiles", imageUrl = "https://pisces.bbystatic.com/BestBuy_US/store/ee/2016/mob/pr/153114-dept-page/cell_phones_unlocked.jpg;maxHeight=288;maxWidth=520"))
-        dsSanPham.add(LoaiSanPham(id = 2, name = "Laptop", imageUrl = "https://cdn3.tgdd.vn/Products/Images/44/85983/lenovo-ideapad-110-15ibr-80t700bkvn-den-h-450x300-450x300.jpg"))
+        getLoaiSanPham(dsSanPham)
         val sanPhamAdapter = LoaiSanPhamAdapter(dsSanPham, this)
         lvLeftMenu.adapter = sanPhamAdapter
+    }
+
+    private fun getLoaiSanPham(ds: ArrayList<LoaiSanPham>) {
+        val requestQueue: RequestQueue = Volley.newRequestQueue(this)
+        val request: JsonArrayRequest = JsonArrayRequest(
+                StaticClass.urlLoaiSanPham, Response.Listener<JSONArray> { response ->
+            if (response.length() > 0) {
+                for(i in 0 until response.length()) {
+                    val obj = response.getJSONObject(i)
+                    val id = obj.getInt("id")
+                    val name = obj.getString("tenLoai")
+                    val image = obj.getString("hinhAnh")
+                    ds.add(LoaiSanPham(id, name, image))
+                }
+            }
+        }, Response.ErrorListener { error ->
+            StaticClass.shortToast(this@MainActivity, error.message.toString())
+        })
+        requestQueue.add(request)
     }
 }
