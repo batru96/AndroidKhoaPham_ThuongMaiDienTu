@@ -2,6 +2,7 @@ package com.example.batru.banhangkhoapham.activity
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.widget.GridLayoutManager
 import android.util.Log
 import android.view.Gravity
 import android.view.animation.AnimationUtils
@@ -11,13 +12,15 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.Volley
 import com.example.batru.banhangkhoapham.R
+import com.example.batru.banhangkhoapham.R.id.lvLeftMenu
 import com.example.batru.banhangkhoapham.adapter.LoaiSanPhamAdapter
+import com.example.batru.banhangkhoapham.adapter.SanPhamAdapter
 import com.example.batru.banhangkhoapham.model.LoaiSanPham
+import com.example.batru.banhangkhoapham.model.SanPham
 import com.example.batru.banhangkhoapham.util.StaticClass
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONArray
-import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
 
@@ -55,28 +58,59 @@ class MainActivity : AppCompatActivity() {
         viewflipper.inAnimation = animationSlideIn
         viewflipper.outAnimation = animationSlideOut
 
-        val dsSanPham: ArrayList<LoaiSanPham> = arrayListOf()
-        getLoaiSanPham(dsSanPham)
-        val sanPhamAdapter = LoaiSanPhamAdapter(dsSanPham, this)
-        lvLeftMenu.adapter = sanPhamAdapter
+        val requestQueue: RequestQueue = Volley.newRequestQueue(this@MainActivity)
+        loadLoaiSanPham(requestQueue)
+        loadSanPhamMoiNhat(requestQueue)
     }
 
-    private fun getLoaiSanPham(ds: ArrayList<LoaiSanPham>) {
-        val requestQueue: RequestQueue = Volley.newRequestQueue(this)
-        val request: JsonArrayRequest = JsonArrayRequest(
-                StaticClass.urlLoaiSanPham, Response.Listener<JSONArray> { response ->
-            if (response.length() > 0) {
-                for(i in 0 until response.length()) {
-                    val obj = response.getJSONObject(i)
-                    val id = obj.getInt("id")
-                    val name = obj.getString("tenLoai")
-                    val image = obj.getString("hinhAnh")
-                    ds.add(LoaiSanPham(id, name, image))
-                }
-            }
-        }, Response.ErrorListener { error ->
+    private fun loadSanPhamMoiNhat(requestQueue: RequestQueue) {
+        val dsSanPham: ArrayList<SanPham> = arrayListOf()
+        val request = JsonArrayRequest(StaticClass.urlSanPhamMoiNhat,
+                Response.Listener<JSONArray> { response ->
+                    if (response.length() > 0) {
+                        for (i in 0 until response.length()) {
+                            val obj = response.getJSONObject(i)
+                            val id = obj.getInt("id")
+                            val name = obj.getString("tenSP")
+                            val price = obj.getInt("giaSP")
+                            val image = obj.getString("hinhAnh")
+                            val description = obj.getString("moTa")
+                            val idType = obj.getInt("idLoai")
+                            dsSanPham.add(SanPham(
+                                    id = id, name = name, price = price, image = image,
+                                    description = description, idType = idType))
+                        }
+                    }
+                }, Response.ErrorListener { error ->
             StaticClass.shortToast(this@MainActivity, error.message.toString())
         })
         requestQueue.add(request)
+        val adapter = SanPhamAdapter(dsSanPham, this)
+        rvSanPham.setHasFixedSize(true)
+        rvSanPham.layoutManager = GridLayoutManager(this, 2)
+        rvSanPham.adapter = adapter
+    }
+
+    private fun loadLoaiSanPham(requestQueue: RequestQueue) {
+        val dsLoaiSP: ArrayList<LoaiSanPham> = arrayListOf()
+
+        val request = JsonArrayRequest(StaticClass.urlLoaiSanPham,
+                Response.Listener<JSONArray> { response ->
+                    if (response.length() > 0) {
+                        for (i in 0 until response.length()) {
+                            val obj = response.getJSONObject(i)
+                            val id = obj.getInt("id")
+                            val name = obj.getString("tenLoai")
+                            val image = obj.getString("hinhAnh")
+                            dsLoaiSP.add(LoaiSanPham(id, name, image))
+                        }
+                    }
+                }, Response.ErrorListener { error ->
+            StaticClass.shortToast(this@MainActivity, error.message.toString())
+        })
+        requestQueue.add(request)
+
+        val adapter = LoaiSanPhamAdapter(dsLoaiSP, this)
+        lvLeftMenu.adapter = adapter
     }
 }
