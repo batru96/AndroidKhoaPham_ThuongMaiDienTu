@@ -10,6 +10,7 @@
         android:id="@+id/imgLoaiSP"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:layout_margin="8dp"
         android:contentDescription="@string/loadding" />
 
     <TextView
@@ -18,5 +19,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         tools:text="Loai san pham"
-        android:textSize="50sp" />
+        android:textSize="35sp" />
 </LinearLayout>

@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">BanHangKhoaPham</string>
     <string name="loadding">Loadding</string>
+    <string name="san_pham_moi_nhat">Sản phẩm mới nhất</string>
 </resources>

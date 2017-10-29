@@ -1,11 +1,14 @@
 package com.example.batru.banhangkhoapham.activity
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.util.Log
 import android.view.Gravity
+import android.view.View
 import android.view.animation.AnimationUtils
+import android.widget.AdapterView
 import android.widget.ImageView
 import com.android.volley.RequestQueue
 import com.android.volley.Response
@@ -92,8 +95,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadLoaiSanPham(requestQueue: RequestQueue) {
-        val dsLoaiSP: ArrayList<LoaiSanPham> = arrayListOf()
-
+        val dsMenu: ArrayList<LoaiSanPham> = arrayListOf()
         val request = JsonArrayRequest(StaticClass.urlLoaiSanPham,
                 Response.Listener<JSONArray> { response ->
                     if (response.length() > 0) {
@@ -101,16 +103,40 @@ class MainActivity : AppCompatActivity() {
                             val obj = response.getJSONObject(i)
                             val id = obj.getInt("id")
                             val name = obj.getString("tenLoai")
-                            val image = obj.getString("hinhAnh")
-                            dsLoaiSP.add(LoaiSanPham(id, name, image))
+                            val image = StaticClass.imageUrl + obj.getString("hinhAnh")
+                            dsMenu.add(LoaiSanPham(id, name, image))
                         }
                     }
+                    dsMenu.add(0, LoaiSanPham(name = "Trang chính", imageUrl = StaticClass.imageUrl + "home.ico"))
+                    dsMenu.add(LoaiSanPham(name = "Liên hệ", imageUrl = StaticClass.imageUrl + "contact.ico"))
+                    dsMenu.add(LoaiSanPham(name = "Thông tin", imageUrl = StaticClass.imageUrl + "info.png"))
                 }, Response.ErrorListener { error ->
             StaticClass.shortToast(this@MainActivity, error.message.toString())
         })
         requestQueue.add(request)
 
-        val adapter = LoaiSanPhamAdapter(dsLoaiSP, this)
+        val adapter = LoaiSanPhamAdapter(dsMenu, this)
         lvLeftMenu.adapter = adapter
+
+        lvLeftMenu.setOnItemClickListener(object : AdapterView.OnItemClickListener {
+            override fun onItemClick(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+                val intent: Intent?
+                when (position) {
+                    1 -> intent = Intent(this@MainActivity, MobileActivity::class.java)
+                    2 -> intent = Intent(this@MainActivity, MobileActivity::class.java)
+                    3 -> intent = Intent(this@MainActivity, ContactActivity::class.java)
+                    4 -> intent = Intent(this@MainActivity, InfomationActivity::class.java)
+                    else -> intent = null
+                }
+                if (intent != null) {
+                    val id = dsMenu[position].getId()
+                    if (id != -1) intent.putExtra("IdLoaiSP", id)
+                    startActivity(intent)
+                } else {
+                    drawerLayout.closeDrawer(Gravity.START)
+                }
+            }
+
+        })
     }
 }
