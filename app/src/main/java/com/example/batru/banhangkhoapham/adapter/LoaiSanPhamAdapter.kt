@@ -10,7 +10,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.example.batru.banhangkhoapham.R
 import com.example.batru.banhangkhoapham.model.LoaiSanPham
-import com.example.batru.banhangkhoapham.util.StaticClass
 import com.squareup.picasso.Picasso
 
 class LoaiSanPhamAdapter(dsLoaiSP: ArrayList<LoaiSanPham>, context: Context) : BaseAdapter() {
@@ -29,7 +28,6 @@ class LoaiSanPhamAdapter(dsLoaiSP: ArrayList<LoaiSanPham>, context: Context) : B
 
     override fun getCount(): Int = dsLoaiSP.size
 
-    @SuppressLint("InflateParams")
     override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
         val view: View?
         val holder: ViewHolder

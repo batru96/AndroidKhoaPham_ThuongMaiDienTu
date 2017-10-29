@@ -9,6 +9,8 @@ class StaticClass {
         val urlLoaiSanPham = "http://$localhost/ThuongMaiDienTu/getloaisp.php"
         val imageUrl = "http://$localhost/ThuongMaiDienTu/images/"
         var urlSanPhamMoiNhat = "http://$localhost/ThuongMaiDienTu/getsanphammoinhat.php"
+        var urlSanPhamDienThoai = "http://$localhost/ThuongMaiDienTu/getsanpham.php?idType=1&page=1"
+
         fun shortToast(context: Context, message: String) =
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
