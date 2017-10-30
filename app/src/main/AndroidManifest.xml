@@ -22,7 +22,7 @@
         <activity android:name=".activity.MobileActivity" />
         <activity android:name=".activity.InfomationActivity" />
         <activity android:name=".activity.ContactActivity" />
-        <activity android:name=".activity.ProductDetailActivity"></activity>
+        <activity android:name=".activity.ProductDetailActivity" />
     </application>
 
 </manifest>

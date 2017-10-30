@@ -15,7 +15,6 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.Volley
 import com.example.batru.banhangkhoapham.R
-import com.example.batru.banhangkhoapham.R.id.lvLeftMenu
 import com.example.batru.banhangkhoapham.adapter.LoaiSanPhamAdapter
 import com.example.batru.banhangkhoapham.adapter.SanPhamAdapter
 import com.example.batru.banhangkhoapham.model.LoaiSanPham
@@ -118,7 +117,7 @@ class MainActivity : AppCompatActivity() {
         val adapter = LoaiSanPhamAdapter(dsMenu, this)
         lvLeftMenu.adapter = adapter
 
-        lvLeftMenu.setOnItemClickListener(object : AdapterView.OnItemClickListener {
+        lvLeftMenu.onItemClickListener = object : AdapterView.OnItemClickListener {
             override fun onItemClick(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
                 val intent: Intent?
                 when (position) {
@@ -136,6 +135,6 @@ class MainActivity : AppCompatActivity() {
                     drawerLayout.closeDrawer(Gravity.START)
                 }
             }
-        })
+        }
     }
 }

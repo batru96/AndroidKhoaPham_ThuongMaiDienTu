@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.text.Layout
+import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -22,22 +22,21 @@ import com.example.batru.banhangkhoapham.adapter.MobileAdapter
 import com.example.batru.banhangkhoapham.model.SanPham
 import com.example.batru.banhangkhoapham.util.StaticClass
 import kotlinx.android.synthetic.main.activity_mobile.*
-import kotlinx.android.synthetic.main.processbar.*
 import org.json.JSONObject
 
 class MobileActivity : AppCompatActivity() {
-    var queue: RequestQueue? = null
-    val dsProduct: ArrayList<SanPham>
-    val adapter: MobileAdapter
-    var isLoading = false
-    var limitData = false
-    var footer: View? = null
-    var page: Int = 1
-    var idType: Int? = null
-    val customHandler: CustomHanlder
+    private lateinit var queue: RequestQueue
+    private val dsProduct: ArrayList<SanPham>
+    private val adapter: MobileAdapter
+    private var isLoading = false
+    private var limitData = false
+    private var footer: View? = null
+    private var page: Int = 1
+    private var idType: Int? = null
+    private val customHandler: CustomHanlder
 
     init {
-        dsProduct = arrayListOf<SanPham>()
+        dsProduct = arrayListOf()
         adapter = MobileAdapter(this, dsProduct)
         customHandler = CustomHanlder()
     }
@@ -50,6 +49,8 @@ class MobileActivity : AppCompatActivity() {
     }
 
     private fun initControls() {
+        setUpToolbar()
+
         queue = Volley.newRequestQueue(this)
         idType = intent.getIntExtra("IdLoaiSP", -1)
         getData(page, idType!!)
@@ -60,14 +61,23 @@ class MobileActivity : AppCompatActivity() {
 
         loadMoreData()
 
-        lvMobile.setOnItemClickListener(object: AdapterView.OnItemClickListener {
+        lvMobile.onItemClickListener = object: AdapterView.OnItemClickListener {
             override fun onItemClick(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
                 val item = dsProduct[position]
-                val intent: Intent = Intent(this@MobileActivity, ProductDetailActivity::class.java)
+                val intent = Intent(this@MobileActivity, ProductDetailActivity::class.java)
                 intent.putExtra("PRODUCT", item)
                 startActivity(intent)
             }
-        })
+        }
+    }
+
+    private fun setUpToolbar() {
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        toolbar.setNavigationOnClickListener{
+            finish()
+        }
     }
 
     private fun loadMoreData() {
@@ -104,12 +114,11 @@ class MobileActivity : AppCompatActivity() {
                 adapter.notifyDataSetChanged()
             } else {
                 limitData = true
-                lvMobile.removeFooterView(footer)
             }
         }, Response.ErrorListener { error ->
             Log.d("Volley", error.message)
         })
-        queue!!.add(request)
+        queue.add(request)
     }
 
     @SuppressLint("HandlerLeak")
@@ -120,9 +129,9 @@ class MobileActivity : AppCompatActivity() {
                 1 -> {
                     getData(++page, idType!!)
                     isLoading = false
+                    lvMobile.removeFooterView(footer)
                 }
             }
-            super.handleMessage(msg)
         }
     }
 
@@ -132,7 +141,6 @@ class MobileActivity : AppCompatActivity() {
             Thread.sleep(3000)
             val message: Message = customHandler.obtainMessage(1)
             customHandler.sendMessage(message)
-            super.run()
         }
     }
 }
