@@ -4,9 +4,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
-import android.util.Log
 import android.view.Gravity
-import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.AdapterView
 import android.widget.ImageView
@@ -117,23 +115,20 @@ class MainActivity : AppCompatActivity() {
         val adapter = LoaiSanPhamAdapter(dsMenu, this)
         lvLeftMenu.adapter = adapter
 
-        lvLeftMenu.onItemClickListener = object : AdapterView.OnItemClickListener {
-            override fun onItemClick(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-                val intent: Intent?
-                when (position) {
-                    1 -> intent = Intent(this@MainActivity, MobileActivity::class.java)
-                    2 -> intent = Intent(this@MainActivity, MobileActivity::class.java)
-                    3 -> intent = Intent(this@MainActivity, ContactActivity::class.java)
-                    4 -> intent = Intent(this@MainActivity, InfomationActivity::class.java)
-                    else -> intent = null
-                }
-                if (intent != null) {
-                    val id = dsMenu[position].getId()
-                    if (id != -1) intent.putExtra("IdLoaiSP", id)
-                    startActivity(intent)
-                } else {
-                    drawerLayout.closeDrawer(Gravity.START)
-                }
+        lvLeftMenu.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+            val intent = when (position) {
+                1 -> Intent(this@MainActivity, MobileActivity::class.java)
+                2 -> Intent(this@MainActivity, MobileActivity::class.java)
+                3 -> Intent(this@MainActivity, ContactActivity::class.java)
+                4 -> Intent(this@MainActivity, InfomationActivity::class.java)
+                else -> null
+            }
+            if (intent != null) {
+                val id = dsMenu[position].getId()
+                if (id != -1) intent.putExtra("IdLoaiSP", id)
+                startActivity(intent)
+            } else {
+                drawerLayout.closeDrawer(Gravity.START)
             }
         }
     }

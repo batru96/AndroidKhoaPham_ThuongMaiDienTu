@@ -24,7 +24,7 @@ class SanPhamAdapter(dsSanPham: ArrayList<SanPham>, context: Context) :
 
     override fun onBindViewHolder(holder: ItemHolder, position: Int) {
         val sanpham: SanPham = dsSanPham[position]
-        holder.tvGiaSP.text = sanpham.getName()
+        holder.tvTenSP.text = sanpham.getName()
         val decimalFormat: DecimalFormat = DecimalFormat("###,###,###")
         holder.tvGiaSP.text = "Giá: ${decimalFormat.format(sanpham.getPrice())} Đ"
         Picasso.with(context).load(sanpham.getImage())

@@ -26,7 +26,7 @@ import org.json.JSONObject
 
 class MobileActivity : AppCompatActivity() {
     private lateinit var queue: RequestQueue
-    private val dsProduct: ArrayList<SanPham>
+    private val dsProduct: ArrayList<SanPham> = arrayListOf()
     private val adapter: MobileAdapter
     private var isLoading = false
     private var limitData = false
@@ -36,7 +36,6 @@ class MobileActivity : AppCompatActivity() {
     private val customHandler: CustomHanlder
 
     init {
-        dsProduct = arrayListOf()
         adapter = MobileAdapter(this, dsProduct)
         customHandler = CustomHanlder()
     }
@@ -61,7 +60,7 @@ class MobileActivity : AppCompatActivity() {
 
         loadMoreData()
 
-        lvMobile.onItemClickListener = object: AdapterView.OnItemClickListener {
+        lvMobile.onItemClickListener = object : AdapterView.OnItemClickListener {
             override fun onItemClick(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
                 val item = dsProduct[position]
                 val intent = Intent(this@MobileActivity, ProductDetailActivity::class.java)
@@ -75,22 +74,24 @@ class MobileActivity : AppCompatActivity() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        toolbar.setNavigationOnClickListener{
+        toolbar.setNavigationOnClickListener {
             finish()
         }
     }
 
     private fun loadMoreData() {
-        lvMobile.setOnScrollListener(object :AbsListView.OnScrollListener{
+        lvMobile.setOnScrollListener(object : AbsListView.OnScrollListener {
             override fun onScrollStateChanged(p0: AbsListView?, p1: Int) {
 
             }
 
             override fun onScroll(absListView: AbsListView?, firstItem: Int, visibleItemCount: Int, totalItemCount: Int) {
-                if (absListView!!.lastVisiblePosition == totalItemCount - 1 && totalItemCount != 0 && !isLoading && !limitData) {
-                    isLoading = true
-                    val threadData = ThreadData()
-                    threadData.start()
+                if (!limitData) {
+                    if (absListView!!.lastVisiblePosition == totalItemCount - 1 && totalItemCount != 0 && !isLoading) {
+                        isLoading = true
+                        val threadData = ThreadData()
+                        threadData.start()
+                    }
                 }
             }
         })
@@ -114,6 +115,7 @@ class MobileActivity : AppCompatActivity() {
                 adapter.notifyDataSetChanged()
             } else {
                 limitData = true
+                lvMobile.removeFooterView(footer)
             }
         }, Response.ErrorListener { error ->
             Log.d("Volley", error.message)
@@ -122,20 +124,19 @@ class MobileActivity : AppCompatActivity() {
     }
 
     @SuppressLint("HandlerLeak")
-    inner class CustomHanlder: Handler() {
+    inner class CustomHanlder : Handler() {
         override fun handleMessage(msg: Message?) {
-            when(msg?.what) {
+            when (msg?.what) {
                 0 -> lvMobile.addFooterView(footer)
                 1 -> {
                     getData(++page, idType!!)
                     isLoading = false
-                    lvMobile.removeFooterView(footer)
                 }
             }
         }
     }
 
-    inner class ThreadData: Thread() {
+    inner class ThreadData : Thread() {
         override fun run() {
             customHandler.sendEmptyMessage(0)
             Thread.sleep(3000)

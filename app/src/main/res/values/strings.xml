@@ -2,4 +2,8 @@
     <string name="app_name">BanHangKhoaPham</string>
     <string name="loadding">Loadding</string>
     <string name="san_pham_moi_nhat">Sản phẩm mới nhất</string>
+    <string name="product_detail">Chi tiết sản phẩm</string>
+    <string name="addCart">Thêm giỏ hàng</string>
+    <string name="mota">Mô tả sản phẩm</string>
+    <string name="listProduct">Danh sách sản phẩm</string>
 </resources>
