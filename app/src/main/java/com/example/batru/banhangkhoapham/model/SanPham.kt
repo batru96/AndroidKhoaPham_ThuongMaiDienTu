@@ -1,6 +1,8 @@
 package com.example.batru.banhangkhoapham.model
 
-class SanPham(id: Int, name: String, price: Int, image: String, description: String, idType: Int) {
+import java.io.Serializable
+
+class SanPham(id: Int, name: String, price: Int, image: String, description: String, idType: Int): Serializable {
     private var id: Int
     private var name: String
     private var price: Int

@@ -5,11 +5,11 @@ import android.widget.Toast
 
 class StaticClass {
     companion object {
-        val localhost = "192.168.0.106"
+        val localhost = "10.10.2.58"
         val urlLoaiSanPham = "http://$localhost/ThuongMaiDienTu/getloaisp.php"
         val imageUrl = "http://$localhost/ThuongMaiDienTu/images/"
         var urlSanPhamMoiNhat = "http://$localhost/ThuongMaiDienTu/getsanphammoinhat.php"
-        var urlSanPhamDienThoai = "http://$localhost/ThuongMaiDienTu/getsanpham.php?idType=1&page=1"
+        var urlSanPhamDienThoai = "http://$localhost/ThuongMaiDienTu/getsanpham.php?"
 
         fun shortToast(context: Context, message: String) =
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
